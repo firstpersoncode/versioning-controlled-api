@@ -5,11 +5,13 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const {data, drafts} = require('./db');
+const db = require('./db');
 const {fetchEntity, updateEntity} = require('./routes');
 
 // set up
+db('mongodb://localhost/keys-api');
 const app = express();
+
 app.use(cors());
 app.use('*', cors());
 app.use(bodyParser.json());
@@ -18,13 +20,9 @@ app.use(cookieParser());
 
 // routes
 app.post("/", updateEntity);
-app.get("/:key", fetchEntity);
-app.get("/", (req, res) => {
-  res.status(200).send(data)
-});
+app.get("/:key?", fetchEntity);
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+module.exports = app.listen(PORT, () => {
   console.log('app running on PORT:', PORT)
 });
-
-module.exports = app;
