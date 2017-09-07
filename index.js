@@ -5,11 +5,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const db = require('./db');
 const {fetchEntity, updateEntity} = require('./routes');
 
 // set up
-db('mongodb://localhost/keys-api');
+if (process.env.NODE_ENV !== "nodb") {
+  const db = require('./db');
+  db('mongodb://localhost/keys-api');
+}
+
 const app = express();
 
 app.use(cors());

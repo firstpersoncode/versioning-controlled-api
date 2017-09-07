@@ -9,5 +9,12 @@ const dataSchema = mongoose.Schema({
   }
 });
 
-const data = mongoose.model('Data', dataSchema);
+let data;
+
+if (process.env.NODE_ENV === "nodb") {
+  data = []; // return array if no mongoDB
+} else {
+  data = mongoose.model('Data', dataSchema);
+}
+
 module.exports = data;

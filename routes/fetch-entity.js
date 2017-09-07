@@ -15,19 +15,31 @@ const closest = (arr, closestTo, attr) => {
 
 module.exports = async (req, res, next) => {
   const {params, query} = req;
+  let resultData;
+  let resultDraft;
   if (params.key) {
-    let resultData = await Data.find({'key': params.key}, (err, data) => {
-      if (err)
-        throw err;
 
-      return data
-    });
-    let resultDraft = await Drafts.find({'key': params.key}, (err, drafts) => {
-      if (err)
-        throw err;
+    // without mongoDB
+    if (process.env.NODE_ENV === "nodb") {
+      resultData = Data.filter((d) => d.key === params.key);
+      resultDraft = Drafts.filter((d) => d.key === params.key);
 
-      return drafts;
-    });
+    // with mongoDB
+    } else {
+      resultData = await Data.find({'key': params.key}, (err, data) => {
+        if (err)
+          throw err;
+
+        return data
+      });
+      resultDraft = await Drafts.find({'key': params.key}, (err, drafts) => {
+        if (err)
+          throw err;
+
+        return drafts;
+      });
+    }
+
     // grab from data and draft, merge, remove duplicate object with same timestamp,
     //order the result for easily get the closest result
     let result = resultData.concat(resultDraft);
@@ -43,12 +55,20 @@ module.exports = async (req, res, next) => {
 
     res.status(200).json({data: result, result: result.lowest, params});
   } else {
-    let resultData = await Data.find({}, (err, data) => {
-      if (err)
-        throw err;
 
-      return data
-    });
-    res.status(200).json({data: resultData, params});
+    // without mongoDB
+    if (process.env.NODE_ENV === "nodb") {
+      res.status(200).json({data: Data});
+
+    // with mondoDB
+    } else {
+      let resultData = await Data.find({}, (err, data) => {
+        if (err)
+          throw err;
+
+        return data
+      });
+      res.status(200).json({data: resultData});
+    }
   }
 }

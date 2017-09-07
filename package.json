@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test --recursive",
-    "dev": "nodemon index.js",
+    "dev": "npm run test && nodemon index.js",
     "start": "npm run test && node index.js",
-    "forever": "npm run test && forever start index.js"
+    "forever": "npm run test && forever start index.js",
+    "nodb": "NODE_ENV=nodb npm run test && NODE_ENV=nodb node index.js"
   },
   "author": "",
   "license": "ISC",

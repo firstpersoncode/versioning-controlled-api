@@ -48,13 +48,9 @@ describe('responds to /:params', () => {
     server.close();
   });
   it('should return matched parameters from first item', (done) => {
-    Data.find({}, (err, data) => {
-      if (err)
-        throw err;
-
-      // return data;
+    if (process.env.NODE_ENV === "nodb") {
       request(server)
-        .get('/' + data[0]['key']) // match with the first item's key value
+        .get('/' + Data[0]['key']) // match with the first item's key value
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
@@ -63,7 +59,24 @@ describe('responds to /:params', () => {
           res.body.data[0].should.have.property('value');
           done();
         });
-    });
+    } else {
+      Data.find({}, (err, data) => {
+        if (err)
+          throw err;
+
+        // return data;
+        request(server)
+          .get('/' + data[0]['key']) // match with the first item's key value
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('data');
+            res.body.data[0].should.have.property('key');
+            res.body.data[0].should.have.property('value');
+            done();
+          });
+      });
+    }
   });
 });
 
