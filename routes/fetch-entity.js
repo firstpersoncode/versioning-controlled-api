@@ -53,7 +53,7 @@ module.exports = async (req, res, next) => {
       }
     }
 
-    res.status(200).json({data: result, result: result.lowest, params});
+    res.status(200).json({data: result, result: result.lowest});
   } else {
 
     // without mongoDB
