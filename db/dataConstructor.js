@@ -55,6 +55,30 @@ class dataConstructor {
   constructor(model) {
     this.items = model;
 
+    // generate if nodb
+    if (process.env.NODE_ENV === "nodb") {
+      this.add([
+        {
+          _id: "0123456789",
+          key: "generatedFromServerNODB",
+          value: "generate from server without db",
+          timestamp: Math.floor(new Date() / 1000)
+        },
+        {
+          _id: "1234567890",
+          key: "generatedFromServerNODB2",
+          value: "generate from server without db 2",
+          timestamp: Math.floor(new Date() / 1000) + 5
+        },
+        {
+          _id: "2345678901",
+          key: "generatedFromServerNODB3",
+          value: "generate from server without db 3",
+          timestamp: Math.floor(new Date() / 1000) + 5
+        }
+      ]);
+    }
+
     // return all items
     this.get = async (cb) => {
       if (process.env.NODE_ENV === "nodb") {
@@ -103,12 +127,12 @@ class dataConstructor {
         if (!result) {
           // update
           const newData = Object.assign({}, data, {_id: generateKey("numOnly")});
-          this.add(newData);
+          this.add(newData, (update) => {
+            if (isFunction(cb))
+              cb(update)
+          });
 
-          if (isFunction(cb))
-            cb(newData)
-
-          return newData;
+          return data
         } else {
           const index = this.items.findIndex(x => x.key === query);
           this.items.splice(index, 1, data)
@@ -121,36 +145,38 @@ class dataConstructor {
 
 
       } else {
-        return this.items.findOne({[key]: query}, (err, doc) => {
-          if (err)
-            throw err
-          // check if key already exist
-          if (!doc) {
-            // update database
-            this.add(data, (res) => {
-              if (isFunction(cb))
-                cb(data)
-            });
+        const doc = await this.items.findOne({[key]: query});
 
-          } else { // if key exist update document
+        if (!doc) {
+          // update database
+          this.add(data, (update) => {
+            if (isFunction(cb))
+              cb(update)
+          });
 
-            // update document
-            delete data[key];
-            delete data._id;
-            for (let k in data) {
-              this.items.findOneAndUpdate({[key]: query}, {'$set': {
-                [k]: data[k]
-              }}, (err, data) => {
+          return data
+        } else { // if key exist update document
+
+          // update document
+          for (let k in data) {
+            if (k !== key && k !== '_id') {
+              await this.items.findOneAndUpdate({[key]: query}, {'$set': {
+                // key: data[key],
+                // _id: data._id,
+                // value: data.value,
+                // timestamp: data.timestamp
+                [k]: data[k],
+              }}, (err, update) => {
                 if (err)
                   throw err
-                if (isFunction(cb))
-                  cb(data)
 
-                return data
+                if (isFunction(cb))
+                  cb(update)
               });
             }
           }
-        });
+          return data
+        }
       }
     }
 
@@ -190,18 +216,41 @@ class dataConstructor {
   // add new item
   add(item, cb) {
     if (process.env.NODE_ENV === "nodb") {
-      this.items.push(item);
-      if (isFunction(cb))
-        cb(item)
-    } else {
-      const update = new this.items(item);
-      update.save((err, data) => {
-        if (err)
-          throw err
-
+      if (item.length) {
+        item.map((d) => {
+          this.items.push(d);
+          if (isFunction(cb))
+            cb(d)
+        })
+      } else {
+        this.items.push(item);
         if (isFunction(cb))
-          cb(data)
-      });
+          cb(item)
+      }
+
+    } else {
+      if (item.length) {
+        item.map((d) => {
+          const update = new this.items(d);
+          update.save((err, data) => {
+            if (err)
+              throw err
+
+            if (isFunction(cb))
+              cb(d)
+          });
+        })
+      } else {
+        const update = new this.items(item);
+        update.save((err, data) => {
+          if (err)
+            throw err
+
+          if (isFunction(cb))
+            cb(data)
+        });
+      }
+
     }
   }
 
@@ -237,7 +286,6 @@ class dataConstructor {
         this.items.remove(query, (err) => {
           if (err)
             throw err
-          console.dir('removed', query);
           if (isFunction(cb))
             cb()
         })

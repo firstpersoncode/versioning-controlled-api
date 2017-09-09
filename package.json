@@ -7,7 +7,7 @@
     "test": "mocha test --recursive",
     "testnodb": "NODE_ENV=nodb mocha test --recursive",
     "dev": "npm run test && nodemon index.js",
-    "start": "npm run test && node index.js",
+    "start": "DEBUG='>' npm run test && node index.js",
     "forever": "npm run test && forever start index.js",
     "nodb": "NODE_ENV=nodb npm run test && NODE_ENV=nodb node index.js"
   },

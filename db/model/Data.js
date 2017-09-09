@@ -8,7 +8,9 @@ const dataSchema = new mongoose.Schema({
   timestamp: {
     type: Number,
     default: Math.floor(new Date() / 1000)
-  }
+  },
+}, {
+  strict: false
 });
 
 
