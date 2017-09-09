@@ -5,7 +5,7 @@ const closest = require('../libs/closest');
 const getRandomInt = require('../libs/getRandomInt');
 const isFunction = require('../libs/isFunction');
 const debug = require('debug')
-const log = debug('>')
+const log = debug('debug')
 
 const should = chai.should();
 const expect = chai.expect;

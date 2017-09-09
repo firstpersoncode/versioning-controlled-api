@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const debug = require('debug')
-const log = debug('>')
+const log = debug('debug')
 // connect database
 const open = (db) => {
   return mongoose.connect(db, (err) => {

@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const debug = require('debug')
-const log = debug('>')
+const log = debug('debug')
 
 const {fetchEntity, updateEntity, randomEntity} = require('./routes');
 

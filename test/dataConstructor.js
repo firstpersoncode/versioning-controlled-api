@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const chai = require('chai');
 const dataConstructor = require('../db/dataConstructor');
 const generateKey = require('../libs/generateKey')
-const debug = require('debug')
-const log = debug('>')
+const debug = require('debug');
+const log = debug('debug');
 
 const should = chai.should();
 const expect = chai.expect;

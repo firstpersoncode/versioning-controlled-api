@@ -3,7 +3,7 @@ const request = require('supertest');
 const chaiHttp = require('chai-http');
 const {Data, Drafts} = require('../db/model');
 const debug = require('debug')
-const log = debug('>')
+const log = debug('debug')
 
 const should = chai.should();
 const expect = chai.expect;
