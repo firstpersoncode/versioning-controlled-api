@@ -22,13 +22,9 @@ npm start
 ```shell
 npm run nodb
 ```
-### Test app
+### Test app with mocha unit testing
 ```shell
 npm run test
-```
-***If you don't have mongoDB installed on your environtment***
-```shell
-npm run testnodb
 ```
 
 ------
@@ -132,7 +128,8 @@ Response:
 
 Method: GET 
 
-Endpoint: /object/generate/2 // Will generate 2 random items
+Endpoint: /object/generate/2 // Will generate random items limited to 2
+Endpoint: /object/generate/random // Will generate random items, min 5 max 25 items
 
 Response: 
 ```javascript
