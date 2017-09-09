@@ -1,20 +1,15 @@
 const mongoose = require('mongoose');
+const Drafts = require('../dataConstructor');
 
-const draftSchema = mongoose.Schema({
+const draftSchema = new mongoose.Schema({
+  _id: String,
   key: String,
   value: String,
   timestamp: {
     type: Number,
-    default: Math.floor(new Date(Date.now()) / 1000)
+    default: Math.floor(new Date() / 1000)
   }
 });
 
-let data;
 
-if (process.env.NODE_ENV === "nodb") {
-  data = []; // return array if no mongoDB
-} else {
-  data = mongoose.model('Drafts', draftSchema);
-}
-
-module.exports = data;
+module.exports = new Drafts(process.env.NODE_ENV === "nodb" ? [] : mongoose.model('Drafts', draftSchema));

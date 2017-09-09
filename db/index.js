@@ -5,7 +5,7 @@ module.exports = (db) => {
     if(err) {
       console.log(err)
     }else {
-      console.log('Connected to database')
+      console.log('Connected to database', db)
     }
   });
 }

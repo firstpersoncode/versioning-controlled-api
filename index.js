@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const {fetchEntity, updateEntity} = require('./routes');
+const {fetchEntity, updateEntity, randomEntity} = require('./routes');
 
 // set up
 if (process.env.NODE_ENV !== "nodb") {
@@ -24,6 +24,7 @@ app.use(cookieParser());
 // routes
 app.post("/", updateEntity);
 app.get("/:key?", fetchEntity);
+app.get("/generate/:count", randomEntity);
 
 const PORT = process.env.PORT || 5000;
 module.exports = app.listen(PORT, () => {
