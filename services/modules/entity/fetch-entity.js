@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const {Data, Drafts} = require('../db/model');
-const closest = require('../libs/closest');
+const {Data, Drafts} = require('../../../db/model');
+const closest = require('../../../libs/closest');
 
 module.exports = async (req, res, next) => {
   const {params, query} = req;

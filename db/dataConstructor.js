@@ -211,6 +211,7 @@ class dataConstructor {
     this.find = this.find.bind(this);
     this.add = this.add.bind(this);
     this.get = this.get.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   // add new item
@@ -283,16 +284,15 @@ class dataConstructor {
         }
 
       } else {
-        this.items.remove(query, (err) => {
+        this.items.remove(query, (err, data) => {
           if (err)
             throw err
           if (isFunction(cb))
-            cb()
-        })
+            cb(data)
+        });
       }
     }
   }
-
 }
 
 module.exports = dataConstructor;

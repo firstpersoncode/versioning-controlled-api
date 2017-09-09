@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const {Data, Drafts} = require('../db/model');
-const generateKey = require('../libs/generateKey');
+const {Data, Drafts} = require('../../../db/model');
+const generateKey = require('../../../libs/generateKey');
 
 module.exports = async (req, res) => {
   const obj = req.body;
@@ -21,5 +21,5 @@ module.exports = async (req, res) => {
   Drafts.add(Object.assign(data, {_id: generateKey("numOnly")}));
 
   const result = await Data.update('key', key, data);
-  res.status(200).send({data: result});
+  res.status(200).json({data: result});
 }
