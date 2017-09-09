@@ -48,7 +48,7 @@ const getRandomInt = require('../libs/getRandomInt');
   accept params : 1. query
                   2. callback
   this.delete({key: 'newKey'}, callback) // will delete newKey only
-  this.delete({}, callback) // will delete everything in collection
+  this.delete({key: '*'}, callback) // will delete everything in collection
 */
 
 class dataConstructor {
@@ -258,11 +258,12 @@ class dataConstructor {
   // delete item
   delete(query, cb) {
     // if query is empty object, remove all items in database
-    if (Object.keys(query).length === 0 && query.constructor === Object) {
+    if (query.key === "*") {
       if (process.env.NODE_ENV === "nodb") {
         this.items = [];
+        this.items.splice(0, this.items.length);
         if (isFunction(cb))
-          cb()
+          cb(this.items)
       } else {
         this.items.remove({}, (err) => {
           if (err)
@@ -273,14 +274,14 @@ class dataConstructor {
       }
     } else {
       if (process.env.NODE_ENV === "nodb") {
-        for (key in query) {
+        for (let k in query) {
           const newArray = this.items.filter((obj) => {
-            return obj[key] !== query[key];
+            return obj[k] !== query[k];
           });
 
           this.items = newArray;
           if (isFunction(cb))
-            cb(newArray)
+            cb(query)
         }
 
       } else {

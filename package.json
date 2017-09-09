@@ -8,6 +8,7 @@
     "dev": "NODE_ENV=dev npm run test && NODE_ENV=dev nodemon index.js",
     "start": "NODE_ENV=prod npm run test && NODE_ENV=prod node index.js",
     "nodb": "NODE_ENV=nodb npm run test && NODE_ENV=nodb node index.js",
+    "heroku": "NODE_ENV=nodb node index.js",
     "forever": "npm run test && forever start index.js"
   },
   "author": "",

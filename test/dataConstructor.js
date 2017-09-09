@@ -33,14 +33,14 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
     it('should delete all items', function(done) {
       this.timeout(5000);
       (async () => {
-        Data.delete({}, () => {
+        Data.delete({key: '*'}, () => {
           Data.get((result) => {
             expect(result).to.be.a("array").that.is.empty;
             log({test: 'Data.delete({})', result})
           });
         });
 
-        Drafts.delete({}, () => {
+        Drafts.delete({key: '*'}, () => {
           Drafts.get((result) => {
             expect(result).to.be.a("array").that.is.empty;
             log({test: 'Drafts.delete({})', result})
