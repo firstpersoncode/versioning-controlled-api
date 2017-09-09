@@ -19,7 +19,6 @@ npm install
 npm start
 ```
 ***If you don't have mongoDB installed on your environtment***
-***Will also run test***
 ```shell
 npm run nodb
 ```
