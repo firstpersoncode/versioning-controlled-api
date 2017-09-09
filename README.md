@@ -128,8 +128,9 @@ Response:
 
 Method: GET 
 
-Endpoint: /object/generate/2 // Will generate random items limited to 2
-Endpoint: /object/generate/random // Will generate random items, min 5 max 25 items
+Endpoint: /object/generate/2 // Will generate random items limited to 2.
+
+Endpoint: /object/generate/random // Will generate random items, min 5 max 25 items.
 
 Response: 
 ```javascript
