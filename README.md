@@ -150,5 +150,27 @@ Response:
 }
 ```
 
+------
+
+Method: DELETE 
+
+Endpoint: /object/mykey? // pass key name as parameter to delete the item that match with the parameter
+
+Endpoint: /object/* // *becareful*, * (asterisk) will remove everything
+
+Body: JSON: {key : mykey} // or use body
+
+Body: JSON: {key : *} // remove everything
+
+Response: 
+```javascript
+{
+    "deleted": {
+        "key": "mykey"
+    }
+}
+
+```
+
 
 All timestamps are unix timestamps according UTC timezone.
