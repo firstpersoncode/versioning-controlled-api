@@ -1,5 +1,4 @@
 const chai = require('chai');
-const {Data, Drafts} = require('../db/model');
 const generateKey = require('../libs/generateKey');
 const closest = require('../libs/closest');
 const getRandomInt = require('../libs/getRandomInt');
@@ -39,13 +38,15 @@ describe("LIBS TEST SESSION", () => {
       const key = 'timestamp';
       const res = closest(array, query, key);
       const exp = {
-        lowest: { timestamp: 3 },
-        highest: { timestamp: 20 },
+        compare: [
+          {lowest: { timestamp: 3 }},
+          {highest: { timestamp: 20 }},
+        ],
         closest: { timestamp: 3 }
       };
-      for (k in res) {
-        assert.equal(res[k].timestamp, exp[k].timestamp)
-      }
+
+      assert.equal(typeof res['compare'], 'object');
+      assert.equal(res['closest']['timestamp'], exp['closest']['timestamp']);
 
       log({query, key, res});
     });

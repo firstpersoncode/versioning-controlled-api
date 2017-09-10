@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Data = require('../dataConstructor');
+const Drafts = require('../model');
 
-const dataSchema = new mongoose.Schema({
+const draftSchema = new mongoose.Schema({
   _id: String,
   key: String,
   value: String,
@@ -14,4 +14,4 @@ const dataSchema = new mongoose.Schema({
 });
 
 
-module.exports = new Data(process.env.NODE_ENV === "nodb" ? [] : mongoose.model('Data', dataSchema));
+module.exports = new Drafts(process.env.NODE_ENV === "nodb" ? [] : mongoose.model('Drafts', draftSchema));

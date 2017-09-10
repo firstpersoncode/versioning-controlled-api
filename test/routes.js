@@ -1,7 +1,7 @@
 const chai = require('chai');
 const request = require('supertest');
 const chaiHttp = require('chai-http');
-const {Data, Drafts} = require('../db/model');
+const {Data, Drafts} = require('../db/schema');
 const debug = require('debug')
 const log = debug('debug')
 
@@ -45,7 +45,7 @@ describe("ROUTES TEST SESSION", () => {
     });
   });
 
-  // test generate keys
+  // test generate items
   describe('generate random lists of keys', (done) => {
     it('should generate 2 random keys', function(done) {
       this.timeout(60000) // dont worry, it wont take until 1 minute
@@ -53,15 +53,15 @@ describe("ROUTES TEST SESSION", () => {
         .get('/generate/2')
         .end(async (err, res) => {
           res.should.have.status(200);
-          await res.body.should.be.a('object');
+          expect(res.body).to.be.a('object');
           log({result: res.body.data})
         });
 
-        setTimeout(done, 1000)
+        setTimeout(done, 500)
     });
   })
 
-  // return array of keys
+  // return array of items
   describe('lists of keys', (done) => {
     it('should return lists of available keys', function(done) {
       this.timeout(60000) // dont worry, it wont take until 1 minute
@@ -69,11 +69,11 @@ describe("ROUTES TEST SESSION", () => {
         .get('/')
         .end(async (err, res) => {
           res.should.have.status(200);
-          await res.body.should.be.a('object');
+          expect(res.body).to.be.a('object');
           log({result: res.body.data})
         });
 
-        setTimeout(done, 1000)
+        setTimeout(done, 500)
     });
   })
 
@@ -95,7 +95,7 @@ describe("ROUTES TEST SESSION", () => {
           expect(res.body.data).to.have.property('key');
           log({result: res.body.data})
         });
-        setTimeout(done, 1000)
+        setTimeout(done, 500)
     });
     it('should return matched parameters from first item', function(done) {
 
@@ -110,7 +110,7 @@ describe("ROUTES TEST SESSION", () => {
           expect(res.body.data[0]).to.have.property('key');
           log({result: res.body.data[0]})
         });
-        setTimeout(done, 1000)
+        setTimeout(done, 500)
     });
     it('should update value of key in database', function(done) {
       this.timeout(60000)
@@ -125,7 +125,7 @@ describe("ROUTES TEST SESSION", () => {
           expect(res.body.data).to.have.property('key');
           log({result: res.body.data})
         });
-        setTimeout(done, 1000)
+        setTimeout(done, 500)
     });
   });
 

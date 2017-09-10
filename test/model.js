@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
 const chai = require('chai');
-const dataConstructor = require('../db/dataConstructor');
 const generateKey = require('../libs/generateKey')
 const debug = require('debug');
+const {message} = require('../libs/validate')
 const log = debug('debug');
 
 const should = chai.should();
 const expect = chai.expect;
 const assert = chai.assert;
 
-const {Data, Drafts} = require('../db/model');
+
+const {Data, Drafts} = require('../db/schema');
 
 
-describe("DATA CONSTRUCTOR TEST SESSION", () => {
+describe("MODEL CONSTRUCTOR TEST SESSION", () => {
   let openDB, closeDB;
   before(() => {
     if (process.env.NODE_ENV !== "nodb") {
@@ -35,23 +36,23 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
       (async () => {
         Data.delete({key: '*'}, () => {
           Data.get((result) => {
-            expect(result).to.be.a("array").that.is.empty;
+            expect(result).to.be.a('array').that.is.empty;
             log({test: 'Data.delete({})', result})
           });
         });
 
         Drafts.delete({key: '*'}, () => {
           Drafts.get((result) => {
-            expect(result).to.be.a("array").that.is.empty;
+            expect(result).to.be.a('array').that.is.empty;
             log({test: 'Drafts.delete({})', result})
           });
         });
       })()
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     });
   });
 
-  // generate random keys
+  // generate random items
   describe('Data.random', () => {
     it('should generate 2 random items', function(done) {
       this.timeout(5000);
@@ -64,7 +65,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
         log({test: 'Data.random()', result})
       })();
 
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     });
   });
 
@@ -81,7 +82,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
         log({test: 'Data.get()', result})
       })();
 
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     });
   });
 
@@ -94,7 +95,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
           _id: generateKey("numOnly"),
           key: "testConstructor",
           value: "generate from test file",
-          timestamp: Math.floor(new Date() / 1000)
+          timestamp: Math.floor(new Date() / 500)
         }
         Data.add(newData, (data) => {
           expect(data).to.be.a("object");
@@ -109,7 +110,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
         });
       })();
 
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     });
 
     it('should add array of items', function(done) {
@@ -120,13 +121,13 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
             _id: generateKey("numOnly"),
             key: "testConstructorArray1",
             value: "array item 1 generate from test file",
-            timestamp: Math.floor(new Date() / 1000)
+            timestamp: Math.floor(new Date() / 500)
           },
           {
             _id: generateKey("numOnly"),
             key: "testConstructorArray2",
             value: "array item 2 generate from test file",
-            timestamp: Math.floor(new Date() / 1000)
+            timestamp: Math.floor(new Date() / 500)
           }
         ]
         Data.add(newArray, (data) => {
@@ -142,7 +143,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
         });
       })();
 
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     })
   });
 
@@ -159,7 +160,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
         log({test: 'Data.find()', result})
       })();
 
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     });
   });
 
@@ -172,7 +173,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
           _id: generateKey("numOnly"),
           key: "testConstructor",
           value: "update from test file",
-          timestamp: Math.floor(new Date() / 1000)
+          timestamp: Math.floor(new Date() / 500)
         }
         Drafts.add(newData);
         const result = await Data.update('key', 'testConstructor', newData);
@@ -181,7 +182,7 @@ describe("DATA CONSTRUCTOR TEST SESSION", () => {
         log({test: 'Data.update()', result})
       })();
 
-      setTimeout(done, 1000)
+      setTimeout(done, 500)
     });
   });
 

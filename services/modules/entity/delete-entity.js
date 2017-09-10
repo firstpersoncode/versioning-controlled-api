@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {Data, Drafts} = require('../../../db/model');
+const {Data, Drafts} = require('../../../db/schema');
 
 module.exports = async (req, res) => {
   const {params, query} = req;
@@ -7,6 +7,7 @@ module.exports = async (req, res) => {
   let data = {
     key: params.key ? params.key : obj.key,
   };
+
   Drafts.delete(data);
   Data.delete(data, (deleted) => {
     res.status(200).json({deleted: data, status: deleted});

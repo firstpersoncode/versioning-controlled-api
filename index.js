@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const debug = require('debug')
 const log = debug('debug')
 
+const {message} = require('./libs/validate')
 const {entity, generate} = require('./services');
 
 // set up
@@ -31,6 +32,10 @@ app.use(cookieParser());
 
 app.use(entity);
 app.use(generate);
+
+app.use((req, res) => {
+  res.status(404).json({data: message.invalidResult})
+})
 
 const PORT = process.env.PORT || 5000;
 module.exports = app.listen(PORT, () => {

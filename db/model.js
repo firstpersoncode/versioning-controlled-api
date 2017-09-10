@@ -1,7 +1,7 @@
 const generateKey = require('../libs/generateKey');
 const isFunction = require('../libs/isFunction');
 const getRandomInt = require('../libs/getRandomInt');
-
+const {validation, message} = require('../libs/validate');
 /*
   MODEL CONSTRUCTOR
 
@@ -51,9 +51,9 @@ const getRandomInt = require('../libs/getRandomInt');
   this.delete({key: '*'}, callback) // will delete everything in collection
 */
 
-class dataConstructor {
+class Model {
   constructor(model) {
-    this.items = model;
+    this._items = model;
 
     // generate if nodb
     if (process.env.NODE_ENV === "nodb") {
@@ -83,20 +83,17 @@ class dataConstructor {
     this.get = async (cb) => {
       if (process.env.NODE_ENV === "nodb") {
         if (isFunction(cb)) {
-          cb(this.items)
-        } else {
-          return this.items;
+          cb(this._items)
         }
+        return this._items;
       } else {
-        return this.items.find({}, (err, data) => {
-          if (err)
-            throw err
+        return this._items.find({}, (err, data) => {
+          if (err) throw err
 
           if (isFunction(cb)) {
             cb(data)
-          } else {
-            return data
           }
+          return data
         });
       }
     }
@@ -104,14 +101,12 @@ class dataConstructor {
     // query item
     this.find = async (key = 'key', query) => {
       if (process.env.NODE_ENV === "nodb") {
-        return this.items.filter((d) => d[key] === query);
+        return this._items.filter((d) => d[key] === query)
 
       // with mongoDB
       } else {
-        return this.items.find({[key]: query}, (err, data) => {
-          if (err)
-            throw err;
-
+        return this._items.find({[key]: query}, (err, data) => {
+          if (err) throw err;
           return data
         });
       }
@@ -119,59 +114,49 @@ class dataConstructor {
 
     // update item in database, if the item not exist, add new one
     this.update = async (key = 'key', query, data, cb) => {
+      // validate key name
+      if (validation.invalidKey(query))
+        return message.invalidKey;
+
+      const addHelper = (newData) => {
+        this.add(newData, (newItem) => {
+          if (isFunction(cb)) cb(newItem)
+        });
+      }
 
       if (process.env.NODE_ENV === "nodb") {
         // check if key exist
-        const awaitRes = await this.find(key, query);
-        let result = awaitRes.pop();
+        const res = await this.find(key, query);
+        let result = res.pop();
         if (!result) {
           // update
           const newData = Object.assign({}, data, {_id: generateKey("numOnly")});
-          this.add(newData, (update) => {
-            if (isFunction(cb))
-              cb(update)
-          });
-
+          addHelper(newData)
           return data
+
         } else {
-          const index = this.items.findIndex(x => x.key === query);
-          this.items.splice(index, 1, data)
-
-          if (isFunction(cb))
-            cb(data)
-
+          const index = this._items.findIndex(x => x.key === query);
+          this._items.splice(index, 1, data);
+          if (isFunction(cb)) cb(data)
           return data;
         }
 
-
       } else {
-        const doc = await this.items.findOne({[key]: query});
+        const doc = await this._items.findOne({[key]: query});
 
         if (!doc) {
           // update database
-          this.add(data, (update) => {
-            if (isFunction(cb))
-              cb(update)
-          });
-
+          addHelper(data)
           return data
+
         } else { // if key exist update document
 
           // update document
           for (let k in data) {
             if (k !== key && k !== '_id') {
-              await this.items.findOneAndUpdate({[key]: query}, {'$set': {
-                // key: data[key],
-                // _id: data._id,
-                // value: data.value,
-                // timestamp: data.timestamp
-                [k]: data[k],
-              }}, (err, update) => {
-                if (err)
-                  throw err
-
-                if (isFunction(cb))
-                  cb(update)
+              await this._items.findOneAndUpdate({[key]: query}, {'$set': { [k]: data[k] }}, (err, update) => {
+                if (err) throw err
+                if (isFunction(cb)) cb(update)
               });
             }
           }
@@ -182,7 +167,11 @@ class dataConstructor {
 
     // generate random items in database
     this.random = async (count, cb) => {
-      const countRes = count !== 'random' ? count : getRandomInt(5, 25);
+      const max = 25;
+      if (count > max) {
+        return message.invalidCount
+      }
+      const countRes = count !== 'random' ? count : getRandomInt(5, max);
       for (let i = 0; i < countRes; i++) {
 
         const newData = {
@@ -216,42 +205,36 @@ class dataConstructor {
 
   // add new item
   add(item, cb) {
+    const addHelper = (newItem) => {
+      const update = new this._items(newItem);
+      update.save((err, data) => {
+        if (err) throw err
+        if (isFunction(cb)) cb(newItem)
+      });
+    }
+
+    const pushHelper = (newItem) => {
+      this._items.push(newItem);
+      if (isFunction(cb)) cb(newItem)
+    }
+
     if (process.env.NODE_ENV === "nodb") {
       if (item.length) {
         item.map((d) => {
-          this.items.push(d);
-          if (isFunction(cb))
-            cb(d)
+          pushHelper(d)
         })
       } else {
-        this.items.push(item);
-        if (isFunction(cb))
-          cb(item)
+        pushHelper(item)
       }
 
     } else {
       if (item.length) {
         item.map((d) => {
-          const update = new this.items(d);
-          update.save((err, data) => {
-            if (err)
-              throw err
-
-            if (isFunction(cb))
-              cb(d)
-          });
+          addHelper(d);
         })
       } else {
-        const update = new this.items(item);
-        update.save((err, data) => {
-          if (err)
-            throw err
-
-          if (isFunction(cb))
-            cb(data)
-        });
+        addHelper(item);
       }
-
     }
   }
 
@@ -260,40 +243,29 @@ class dataConstructor {
     // if query is empty object, remove all items in database
     if (query.key === "*") {
       if (process.env.NODE_ENV === "nodb") {
-        this.items = [];
-        this.items.splice(0, this.items.length);
-        if (isFunction(cb))
-          cb(this.items)
+        this._items.splice(0, this._items.length);
+        if (isFunction(cb)) cb(this._items)
       } else {
-        this.items.remove({}, (err) => {
-          if (err)
-            throw err
-          if (isFunction(cb))
-            cb()
+        this._items.remove({}, (err) => {
+          if (err) throw err
+          if (isFunction(cb)) cb(this._items)
         })
       }
     } else {
       if (process.env.NODE_ENV === "nodb") {
         for (let k in query) {
-          const newArray = this.items.filter((obj) => {
-            return obj[k] !== query[k];
-          });
-
-          this.items = newArray;
-          if (isFunction(cb))
-            cb(query)
+          const newArray = this._items.filter((obj) => obj[k] !== query[k]);
+          this._items = newArray;
+          if (isFunction(cb)) cb(query)
         }
-
       } else {
-        this.items.remove(query, (err, data) => {
-          if (err)
-            throw err
-          if (isFunction(cb))
-            cb(data)
+        this._items.remove(query, (err, data) => {
+          if (err) throw err
+          if (isFunction(cb)) cb(data)
         });
       }
     }
   }
 }
 
-module.exports = dataConstructor;
+module.exports = Model;
