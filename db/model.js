@@ -255,8 +255,9 @@ class Model {
       if (process.env.NODE_ENV === "nodb") {
         for (let k in query) {
           const newArray = this._items.filter((obj) => obj[k] !== query[k]);
+          const deleted = this._items.filter((obj) => obj[k] === query[k]);
           this._items = newArray;
-          if (isFunction(cb)) cb(query)
+          if (isFunction(cb)) cb(validation.invalidDelete(deleted) ? message.invalidDelete : deleted)
         }
       } else {
         this._items.remove(query, (err, data) => {

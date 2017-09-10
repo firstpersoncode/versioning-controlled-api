@@ -11,6 +11,6 @@ module.exports.message = {
 module.exports.validation = {
   invalidKey: (key) => _.includes(['asc', 'desc', '*', 'generate', '', 'key'], key),
   invalidLength: (result) => !result.length,
-  invalidResult: (result) => result === null || result === undefined || result < 0,
+  invalidResult: (result) => result === null || result === undefined || result < 0 || !result,
   invalidDelete: (result) => process.env.NODE_ENV === "nodb" ? !result.length : data.n < 1
 }

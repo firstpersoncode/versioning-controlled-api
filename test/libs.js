@@ -3,6 +3,7 @@ const generateKey = require('../libs/generateKey');
 const closest = require('../libs/closest');
 const getRandomInt = require('../libs/getRandomInt');
 const isFunction = require('../libs/isFunction');
+const {validation} = require('../libs/validate');
 const debug = require('debug')
 const log = debug('debug')
 
@@ -71,7 +72,29 @@ describe("LIBS TEST SESSION", () => {
     it('should know if variable is a function', () => {
       const func = () => {};
       assert.equal(isFunction(func), true);
-      log({isFunction: isFunction(func)});
+      log({isFunction: isFunction});
+    });
+  });
+
+  // validate
+  describe('validate', () => {
+    it('invalid key', () => {
+      assert.equal(validation.invalidKey('asc'), true);
+      assert.equal(validation.invalidKey('desc'), true);
+      assert.equal(validation.invalidKey('*'), true);
+      log({invalidKey: validation.invalidKey});
+    });
+
+    it('invalid length', () => {
+      assert.equal(validation.invalidLength([]), true);
+      log({invalidLength: validation.invalidLength});
+    });
+
+    it('invalid result', () => {
+      assert.equal(validation.invalidResult(null), true);
+      assert.equal(validation.invalidResult(undefined), true);
+      assert.equal(validation.invalidResult(-1), true);
+      log({invalidResult: validation.invalidResult});
     });
   });
 })

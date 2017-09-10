@@ -3,6 +3,6 @@ const generate = require('./modules/generate');
 
 const Router = express.Router();
 Router.route("/generate/:count")
-  .get(generate)
+  .post(generate)
 
 module.exports = Router;

@@ -50,7 +50,7 @@ describe("ROUTES TEST SESSION", () => {
     it('should generate 2 random keys', function(done) {
       this.timeout(60000) // dont worry, it wont take until 1 minute
       request(server)
-        .get('/generate/2')
+        .post('/generate/2')
         .end(async (err, res) => {
           res.should.have.status(200);
           expect(res.body).to.be.a('object');
