@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {Data, Drafts} = require('../../../db/schema');
+const {Data, Drafts} = require('../../../source/schema');
 
 module.exports = async (req, res) => {
   const {params} = req;

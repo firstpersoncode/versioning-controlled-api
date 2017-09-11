@@ -56,6 +56,28 @@ Response:
 
 ------
 
+Method: GET
+
+Endpoint: /object/?keys=key|timestamp // set object properties
+
+Endpoint: /object/mykey?keys=key|timestamp
+
+Endpoint: /object/mykey?filter=newest // only show the latest created object based on timestamp (oldest will show only the oldest created object)
+
+Endpoint: /object/mykey?filter=newest&keys=key|timestamp
+
+Response:
+```javascript
+{
+  "data": {
+    "key":"mykey",
+    "timestamp": newest
+  },
+}
+```
+
+------
+
 Method: POST
 
 Endpoint: /object

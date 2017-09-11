@@ -8,11 +8,11 @@ const debug = require('debug')
 const log = debug('debug')
 
 const {message} = require('./libs/validate')
-const {entity, generate} = require('./services');
+const {entity, generate} = require('./routes');
 
 // set up
 if (process.env.NODE_ENV !== "nodb") {
-  const {open} = require('./db');
+  const {open} = require('./source');
   open('mongodb://localhost/keys-api');
 }
 

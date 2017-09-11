@@ -1,7 +1,7 @@
 const chai = require('chai');
 const request = require('supertest');
 const chaiHttp = require('chai-http');
-const {Data, Drafts} = require('../db/schema');
+const {Data, Drafts} = require('../source/schema');
 const debug = require('debug')
 const log = debug('debug')
 
@@ -14,7 +14,7 @@ describe("ROUTES TEST SESSION", () => {
   let openDB, closeDB, server;
   before(() => {
     if (process.env.NODE_ENV !== "nodb") {
-      const {open, close} = require('../db');
+      const {open, close} = require('../source');
       openDB = open;
       closeDB = close;
       openDB('mongodb://localhost/keys-api');

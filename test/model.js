@@ -10,7 +10,7 @@ const expect = chai.expect;
 const assert = chai.assert;
 
 
-const {Data, Drafts} = require('../db/schema');
+const {Data, Drafts} = require('../source/schema');
 
 
 describe("MODEL CONSTRUCTOR TEST SESSION", () => {
@@ -18,7 +18,7 @@ describe("MODEL CONSTRUCTOR TEST SESSION", () => {
   before(() => {
     if (process.env.NODE_ENV !== "nodb") {
       // connect to database for testing purpose
-      const {open, close} = require('../db');
+      const {open, close} = require('../source');
       openDB = open;
       closeDB = close;
       openDB('mongodb://localhost/keys-api');

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const {Data, Drafts} = require('../../../db/schema');
+const {Data, Drafts} = require('../../../source/schema');
 const generateKey = require('../../../libs/generateKey');
 
 module.exports = async (req, res) => {
